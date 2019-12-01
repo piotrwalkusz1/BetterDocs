@@ -1,0 +1,12 @@
+@page
+@model EditDocumentModel
+@{
+    ViewData["Title"] = "Edit document";
+}
+
+<div>
+    <textarea id="documentContent"></textarea>
+</div>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/diff-match-patch-js-browser-and-nodejs/diff_match_patch.js"></script>
+<script src="~/js/edit-document.js"></script>
