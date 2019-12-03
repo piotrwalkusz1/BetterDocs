@@ -1,7 +1,9 @@
 @page
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SharedResource> Localizer;
 @model EditDocumentModel
 @{
-    ViewData["Title"] = "Edit document";
+    ViewData["Title"] = Localizer["Edit document"];
 }
 
 <div>
