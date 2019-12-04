@@ -1,8 +1,7 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using BetterDocs.Areas.Identity
 @using Microsoft.AspNetCore.Mvc.Localization
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
-@inject IHtmlLocalizer<SharedResource> Localizer
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))

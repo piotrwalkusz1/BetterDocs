@@ -17,6 +17,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
+using BetterDocs.Services;
+using BetterDocs.Areas.Identity;
 
 namespace BetterDocs
 {
@@ -35,9 +38,17 @@ namespace BetterDocs
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDbContext<DocumentsDbContext>(options =>
+                options.UseSqlite(
+                    Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRazorPages();
+
+            services.AddAuthentication()
+                .AddCookie(options => options.SlidingExpiration = true);
+
             services.AddSignalR();
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.AddMvc()
@@ -58,6 +69,8 @@ namespace BetterDocs
             });
 
             services.AddControllers();
+
+	    services.AddScoped(typeof(DocumentEditionService));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,6 +78,7 @@ namespace BetterDocs
         {
             if (env.IsDevelopment())
             {
+                logger.LogInformation("In Development environment");
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
@@ -85,7 +99,7 @@ namespace BetterDocs
 
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
