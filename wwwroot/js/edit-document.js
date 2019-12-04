@@ -25,7 +25,7 @@ documentContentElement.oninput = function () {
     var text = documentContentElement.value;
     var patch = dmp.patch_toText(dmp.patch_make(oldText, text));
     oldText = text;
-    connection.invoke("ChangeText", patch).catch(function (err) {
+    connection.invoke("ChangeText", patch, "1").catch(function (err) {
         return console.error(err.toString());
     });
 };
