@@ -1,7 +1,9 @@
 ﻿@page
 @model ErrorModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SharedResource> Localizer;
 @{
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = Localizer["Error"];
 }
 
 <h1 class="text-danger">Error.</h1>
