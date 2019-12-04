@@ -1,0 +1,18 @@
+@page
+@model BetterDocs.Pages.Documents.Create
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer;
+@{
+    ViewData["Title"] = Localizer["Create"];
+}
+
+<form method="post">
+    <div>
+        <label asp-for="TextDocumentModel.Name"></label>
+        <input asp-for="TextDocumentModel.Name" class="form-control"/>
+        <span asp-validation-for="TextDocumentModel.Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary"/>
+    </div>
+</form>

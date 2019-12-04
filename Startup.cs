@@ -46,7 +46,7 @@ namespace BetterDocs
             services.AddMvc()
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
                 .AddDataAnnotationsLocalization();
-            
+
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 var supportedCultures = new[]
@@ -62,7 +62,8 @@ namespace BetterDocs
 
             services.AddControllers();
 
-	    services.AddScoped(typeof(DocumentEditionService));
+            services.AddScoped(typeof(DocumentEditionService));
+            services.AddScoped(typeof(DocumentService));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,7 +80,7 @@ namespace BetterDocs
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            
+
             var locOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
             app.UseRequestLocalization(locOptions.Value);
 
