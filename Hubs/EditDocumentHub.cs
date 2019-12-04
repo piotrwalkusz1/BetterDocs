@@ -9,6 +9,7 @@ namespace BetterDocs.Hubs
     public class EditDocumentHub : Hub
     {
         private readonly DocumentEditionService _documentEditionService;
+
         public EditDocumentHub(DocumentEditionService documentEditionService)
         {
             _documentEditionService = documentEditionService;

@@ -47,4 +47,7 @@
     <data name="Login" xml:space="preserve">
         <value>Zaloguj się</value>
     </data>
+    <data name="Documents" xml:space="preserve">
+        <value>Dokumenty</value>
+    </data>
 </root>
