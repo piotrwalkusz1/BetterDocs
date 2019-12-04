@@ -19,7 +19,8 @@ namespace BetterDocs.Services
         public TextDocument UpdateDocument(ApplicationUser user, string text, string documentId)
         {
             var textDocument = _documentsContext.TextDocuments
-                .Where(document => document.ContributorId.Equals(user.Id))
+                // TODO: Check access to the document
+                //.Where(document => document.ContributorId.Equals(user.Id))
                 .FirstOrDefault(document => document.Id.Equals(documentId));
 
             if (textDocument == null)
@@ -28,8 +29,8 @@ namespace BetterDocs.Services
                 return null;
             }
 
-            // TODO: don't append text
-            textDocument.Text += text.Trim();
+            // TODO: don't append text, merge it somehow
+            textDocument.Text += text;
             _documentsContext.TextDocuments.Update(textDocument);
 
             return textDocument;
@@ -38,8 +39,9 @@ namespace BetterDocs.Services
         public TextDocument GetDocument(ApplicationUser user, string documentId)
         {
             return _documentsContext.TextDocuments
-                .Where(document => document.Id.Equals(documentId))
-                .FirstOrDefault(document => document.ContributorId.Equals(user.Id));
+                //TODO: Check access to the document
+                //.Where(document => document.ContributorId.Equals(user.Id))
+                .FirstOrDefault(document => document.Id.Equals(documentId));
         }
     }
 }

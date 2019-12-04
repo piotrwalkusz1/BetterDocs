@@ -13,6 +13,7 @@ namespace BetterDocs.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Create a sample document, remove after implementation documents creating.
             var textDocument = new TextDocument
             {
                 Id = "1",

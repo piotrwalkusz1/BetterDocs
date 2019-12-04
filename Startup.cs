@@ -78,7 +78,6 @@ namespace BetterDocs
         {
             if (env.IsDevelopment())
             {
-                logger.LogInformation("In Development environment");
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
