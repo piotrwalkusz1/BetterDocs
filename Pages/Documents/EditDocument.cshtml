@@ -9,8 +9,8 @@
 <div class="desk">
     <div class="btn-group">
         <button id="saveDocument" class="btn btn-primary">@Localizer["Save"]</button>
-        <button id="addContributor" class="btn">Add contributor</button>
-        <button id="manageContributors" class="btn">Manage contributors</button>
+        <button id="addContributor" class="btn">@Localizer["Add contributor"]</button>
+        <button id="manageContributors" class="btn">@Localizer["Manage contributors"]</button>
     </div>
 
     @* Manage contributors modal*@
@@ -59,7 +59,7 @@
                     <form method="post">
                         <input class="form-control" name="email" type="email" placeholder="User email" id="email"/>
                         <input type="hidden" name="documentId" value="@Model.DocumentId"/>
-                        <input type="submit" class="btn btn-primary" value="Add" asp-page-handler="AddContributor"/>
+                        <input type="submit" class="btn btn-primary" value="@Localizer["Add"]" asp-page-handler="AddContributor"/>
                     </form>
                 </div>
             </div>

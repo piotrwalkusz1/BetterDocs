@@ -90,4 +90,7 @@
         <value>Home</value>
         <comment>Home</comment>
     </data>
+    <data name="Add contributor" xml:space="preserve">
+        <value>Udostępnij</value>
+    </data>
 </root>

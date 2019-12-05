@@ -74,4 +74,10 @@
     <data name="Home" xml:space="preserve">
         <value>Strona główna</value>
     </data>
+    <data name="Add" xml:space="preserve">
+        <value>Dodaj</value>
+    </data>
+    <data name="Manage contributors" xml:space="preserve">
+        <value>Zarządzaj udostępnieniami</value>
+    </data>
 </root>

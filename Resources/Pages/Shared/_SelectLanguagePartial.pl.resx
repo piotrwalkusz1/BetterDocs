@@ -21,4 +21,7 @@
     <data name="Request culture provider:" xml:space="preserve">
         <value>Zmień język</value>
     </data>
+    <data name="Language:" xml:space="preserve">
+        <value>Język:</value>
+    </data>
 </root>
