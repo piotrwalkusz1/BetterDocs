@@ -1,6 +1,7 @@
 using System.Globalization;
 using BetterDocs.Areas.Identity;
 using BetterDocs.Data;
+using BetterDocs.Filters;
 using BetterDocs.Hubs;
 using BetterDocs.Services;
 using Microsoft.AspNetCore.Builder;
@@ -8,8 +9,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
@@ -61,7 +64,8 @@ namespace BetterDocs
 
             services.AddControllers();
 
-            services.AddScoped(typeof(DocumentService));
+            services.TryAddScoped<IDocumentService, DocumentService>();
+            services.TryAddScoped<CallCounterFilter>();
 
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "My API", Version = "v1"}); });
 

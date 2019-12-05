@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using BetterDocs.Data.Entities;
+using BetterDocs.Filters;
 using BetterDocs.Models;
 using BetterDocs.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -26,12 +27,14 @@ namespace BetterDocs.Controllers
         }
 
         [HttpGet("{id}")]
+        [ServiceFilter(typeof(CallCounterFilter))]
         public TextDocument GetTextDocument(string id)
         {
             return _documentService.GetDocument(id);
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(CallCounterFilter))]
         public CreatedAtActionResult CreateTextDocument(TextDocumentModel textDocument)
         {
             var document = _documentService.CreateDocument(textDocument);

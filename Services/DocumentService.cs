@@ -1,14 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using BetterDocs.Areas.Identity;
 using BetterDocs.Data;
 using BetterDocs.Data.Entities;
 using BetterDocs.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace BetterDocs.Services
 {
@@ -38,7 +35,7 @@ namespace BetterDocs.Services
         public TextDocument CreateDocument(TextDocumentModel textDocument)
         {
             var document = new TextDocument
-                {Text = textDocument.Text, Name = textDocument.Name, Owner = GetApplicationUser()};
+                {Text = textDocument.Text ?? "", Name = textDocument.Name, Owner = GetApplicationUser()};
 
             var entityEntry = _dbContext.TextDocuments.Add(document);
             _dbContext.SaveChanges();

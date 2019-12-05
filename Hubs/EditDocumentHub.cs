@@ -16,12 +16,12 @@ namespace BetterDocs.Hubs
     [Authorize(AuthenticationSchemes = "Identity.Application")]
     public class EditDocumentHub : Hub
     {
-        private readonly DocumentService _documentService;
+        private readonly IDocumentService _documentService;
         private readonly IDistributedCache _distributedCache;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public EditDocumentHub(DocumentService documentService, IDistributedCache distributedCache,
+        public EditDocumentHub(IDocumentService documentService, IDistributedCache distributedCache,
             IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager)
         {
             _documentService = documentService;
