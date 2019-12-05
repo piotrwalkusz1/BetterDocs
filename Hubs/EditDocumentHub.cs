@@ -96,9 +96,9 @@ namespace BetterDocs.Hubs
                 var textDocument = _documentService.GetDocumentWithoutCheckingAccess(documentId);
 
                 var usersWithAccess = new List<string> {textDocument.Owner.Id};
-                if (textDocument.SharedWith != null)
+                if (textDocument.DocumentsSharing != null)
                 {
-                    usersWithAccess.AddRange(textDocument.SharedWith.Select(userSharedWith => userSharedWith.Id));
+                    usersWithAccess.AddRange(textDocument.DocumentsSharing.Select(x => x.UserId));
                 }
 
                 _distributedCache.Set("documents/" + documentId + "/users", usersWithAccess.SerializeToByteArray(),

@@ -35,7 +35,7 @@ namespace BetterDocs
                 options.UseSqlite(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRazorPages()
                 .AddRazorPagesOptions(options => { options.Conventions.AuthorizeFolder("/Documents"); });

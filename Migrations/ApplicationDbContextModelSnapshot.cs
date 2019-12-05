@@ -61,9 +61,6 @@ namespace BetterDocs.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("TextDocumentId")
-                        .HasColumnType("TEXT");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("INTEGER");
 
@@ -80,9 +77,22 @@ namespace BetterDocs.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex");
 
-                    b.HasIndex("TextDocumentId");
-
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("BetterDocs.Data.Entities.ShareDocument", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DocumentId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("UserId", "DocumentId");
+
+                    b.HasIndex("DocumentId");
+
+                    b.ToTable("ShareDocuments");
                 });
 
             modelBuilder.Entity("BetterDocs.Data.Entities.TextDocument", b =>
@@ -239,11 +249,19 @@ namespace BetterDocs.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("BetterDocs.Areas.Identity.ApplicationUser", b =>
+            modelBuilder.Entity("BetterDocs.Data.Entities.ShareDocument", b =>
                 {
-                    b.HasOne("BetterDocs.Data.Entities.TextDocument", null)
-                        .WithMany("SharedWith")
-                        .HasForeignKey("TextDocumentId");
+                    b.HasOne("BetterDocs.Data.Entities.TextDocument", "Document")
+                        .WithMany("DocumentsSharing")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BetterDocs.Areas.Identity.ApplicationUser", "User")
+                        .WithMany("DocumentsSharing")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BetterDocs.Data.Entities.TextDocument", b =>

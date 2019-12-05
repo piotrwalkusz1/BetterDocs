@@ -23,18 +23,18 @@
                 <div class="modal-body">
                     <table class="table">
                         <tbody>
-                        @foreach (var contributor in Model._documentService.GetDocument(Model.DocumentId).SharedWith)
+                        @foreach (var contributor in Model._documentService.GetDocument(Model.DocumentId).DocumentsSharing)
                         {
                             <tr>
                                 <td>
-                                    @contributor.Email
+                                    @contributor.User.Email
                                 </td>
                                 <td>
-                                    @contributor.UserName
+                                    @contributor.User.UserName
                                 </td>
                                 <td>
                                     <form method="post">
-                                        <input type="hidden" name="email" value="@contributor.Email"/>
+                                        <input type="hidden" name="email" value="@contributor.User.Email"/>
                                         <input type="hidden" name="documentId" value="@Model.DocumentId"/>
                                         <input type="submit" value="@Localizer["Delete"]" asp-page-handler="RemoveContributor"/>
                                     </form>
