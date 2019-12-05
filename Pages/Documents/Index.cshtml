@@ -1,14 +1,18 @@
 @page
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SharedResource> Localizer;
 @model BetterDocs.Pages.Documents.List
 
 @{
-    ViewData["Title"] = "List";
+    ViewData["Title"] = Localizer["Documents"];
 }
 
 <h1>Index</h1>
 
 <p>
-    <a asp-page="Create">Create New</a>
+    <a asp-page="Create">
+        @Localizer["Create new"]
+    </a>
 </p>
 
 <table class="table">
@@ -20,6 +24,7 @@
         <th>
             @Html.DisplayNameFor(model => model.TextDocumentModels[0].Id)
         </th>
+        <th></th>
         <th></th>
         <th></th>
     </tr>
@@ -35,13 +40,16 @@
                 @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
-                <a asp-page="EditDocument" asp-route-id="@item.Id">Edit</a>
+                <a asp-page="EditDocument" asp-route-id="@item.Id">@Localizer["Edit"]</a>
             </td>
             <td>
                 <form method="post">
                     <input type="hidden" name="id" value="@item.Id"/>
-                    <input type="submit" value="Delete" asp-page-handler="Remove"/>
+                    <input type="submit" value="@Localizer["Delete"]" asp-page-handler="Remove"/>
                 </form>
+            </td>
+            <td>
+                <a asp-controller="Documents" asp-action="GetDocumentAsPdf" asp-route-id="@item.Id">@Localizer["Download"]</a>
             </td>
         </tr>
     }

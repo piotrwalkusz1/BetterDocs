@@ -2,12 +2,14 @@ using System.Collections.Generic;
 using BetterDocs.Data.Entities;
 using BetterDocs.Models;
 using BetterDocs.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BetterDocs.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class DocumentsController : ControllerBase
     {
         private readonly DocumentService _documentService;
@@ -28,12 +30,24 @@ namespace BetterDocs.Controllers
         {
             return _documentService.GetDocument(id);
         }
-        
+
         [HttpPost]
         public CreatedAtActionResult CreateTextDocument(TextDocumentModel textDocument)
         {
             var document = _documentService.CreateDocument(textDocument);
             return CreatedAtAction(nameof(GetTextDocument), new {id = document.Id}, document);
+        }
+
+        [HttpGet("{id}/pdf")]
+        public IActionResult GetDocumentAsPdf(string id)
+        {
+            var textDocument = _documentService.GetDocument(id);
+
+            var content = IronPdf.HtmlToPdf.StaticRenderHtmlAsPdf(textDocument.Text).Stream;
+            var contentType = "APPLICATION/octet-stream";
+            var fileName = textDocument.Name + ".pdf";
+
+            return File(content, contentType, fileName);
         }
     }
 }

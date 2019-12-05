@@ -16,15 +16,13 @@ namespace BetterDocs.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IDistributedCache _distributedCache;
 
         public DocumentService(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager,
-            IHttpContextAccessor httpContextAccessor, IDistributedCache distributedCache)
+            IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
-            _distributedCache = distributedCache;
         }
 
         public List<TextDocument> GetDocumentsForUser()
@@ -89,6 +87,7 @@ namespace BetterDocs.Services
             
             textDocument.Text = text;
             _dbContext.TextDocuments.Update(textDocument);
+            _dbContext.SaveChanges();
 
             return textDocument;
         }

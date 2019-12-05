@@ -50,4 +50,16 @@
     <data name="Documents" xml:space="preserve">
         <value>Dokumenty</value>
     </data>
+    <data name="Create new" xml:space="preserve">
+        <value>Stwórz nowy</value>
+    </data>
+    <data name="Edit" xml:space="preserve">
+        <value>Edytuj</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Usuń</value>
+    </data>
+    <data name="Download" xml:space="preserve">
+        <value>Pobierz</value>
+    </data>
 </root>

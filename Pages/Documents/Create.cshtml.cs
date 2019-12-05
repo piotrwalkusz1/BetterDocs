@@ -19,7 +19,7 @@ namespace BetterDocs.Pages.Documents
         public IActionResult OnPost()
         {
             var textDocument = _documentService.CreateDocument(TextDocumentModel);
-            return RedirectToPage("/EditDocument", new {id = textDocument.Id});
+            return RedirectToPage("EditDocument", new {id = textDocument.Id});
         }
     }
 }

@@ -43,4 +43,24 @@
         <value>Hello</value>
         <comment>Hello</comment>
     </data>
+    <data name="Documents" xml:space="preserve">
+        <value>Documents</value>
+        <comment>Documents</comment>
+    </data>
+    <data name="Create new" xml:space="preserve">
+        <value>Create new</value>
+        <comment>Create new</comment>
+    </data>
+    <data name="Edit" xml:space="preserve">
+        <value>Edit</value>
+        <comment>Edit</comment>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Delete</value>
+        <comment>Delete</comment>
+    </data>
+    <data name="Download" xml:space="preserve">
+        <value>Download</value>
+        <comment>Download</comment>
+    </data>
 </root>

@@ -1,11 +1,6 @@
 "use strict";
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/editDocumentHub").build();
-
-connection.start().catch(function (err) {
-    return console.error(err.toString());
-});
-
+// TODO: Usunąć
 // OLD VERSION
 
 // var documentContentElement = document.getElementById("documentContent");
@@ -32,8 +27,23 @@ connection.start().catch(function (err) {
 //     });
 // };
 
+
 var documentContentElement = document.getElementById("documentContent");
+documentContentElement.hidden = true;
 var documentId = new URLSearchParams(window.location.search).get("id");
+
+var connection = new signalR.HubConnectionBuilder().withUrl("/editDocumentHub").build();
+
+connection.start().then(function () {
+    connection.invoke("GetText", documentId).then(function (text) {
+        documentContentElement.value = text;
+        documentContentElement.hidden = false;
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+}).catch(function (err) {
+    return console.error(err.toString());
+});
 
 connection.on("ChangeText", function (text, documentIdToChange) {
     if (documentId === documentIdToChange) {
