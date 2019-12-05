@@ -54,6 +54,12 @@ namespace BetterDocs.Services
                 .FirstOrDefault(document => document.Owner.Id.Equals(user.Id) || document.SharedWith.Any(u => u.Id.Equals(user.Id)));
         }
 
+        public TextDocument GetDocumentWithoutCheckingAccess(string id)
+        {
+            return _dbContext.TextDocuments
+                .FirstOrDefault(document => document.Id.Equals(id));
+        }
+
         public void RemoveDocument(string id)
         {
             var user = GetApplicationUser();
@@ -81,7 +87,6 @@ namespace BetterDocs.Services
 
             if (textDocument == null)
             {
-                // TODO: Return that the document doesn't exist or the user has no permission to view it.
                 return null;
             }
             

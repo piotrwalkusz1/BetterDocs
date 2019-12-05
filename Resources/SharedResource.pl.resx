@@ -62,4 +62,7 @@
     <data name="Download" xml:space="preserve">
         <value>Pobierz</value>
     </data>
+    <data name="Save" xml:space="preserve">
+        <value>Zapisz</value>
+    </data>
 </root>

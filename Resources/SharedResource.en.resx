@@ -63,4 +63,8 @@
         <value>Download</value>
         <comment>Download</comment>
     </data>
+    <data name="Save" xml:space="preserve">
+        <value>Save</value>
+        <comment>Save</comment>
+    </data>
 </root>

@@ -32,10 +32,16 @@ var documentContentElement = document.getElementById("documentContent");
 documentContentElement.hidden = true;
 var documentId = new URLSearchParams(window.location.search).get("id");
 
+document.getElementById("saveDocument").onclick = function () {
+    connection.invoke("SaveText", documentId).catch(function (err) {
+        return console.error(err.toString());
+    });
+};
+
 var connection = new signalR.HubConnectionBuilder().withUrl("/editDocumentHub").build();
 
 connection.start().then(function () {
-    connection.invoke("GetText", documentId).then(function (text) {
+    connection.invoke("StartEditingDocument", documentId).then(function (text) {
         documentContentElement.value = text;
         documentContentElement.hidden = false;
     }).catch(function (err) {
@@ -45,10 +51,8 @@ connection.start().then(function () {
     return console.error(err.toString());
 });
 
-connection.on("ChangeText", function (text, documentIdToChange) {
-    if (documentId === documentIdToChange) {
-        documentContentElement.value = text;
-    }
+connection.on("ChangeText", function (text) {
+    documentContentElement.value = text;
 });
 
 documentContentElement.oninput = function () {
