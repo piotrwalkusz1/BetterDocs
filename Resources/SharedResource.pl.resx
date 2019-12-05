@@ -80,4 +80,7 @@
     <data name="Manage contributors" xml:space="preserve">
         <value>Zarządzaj udostępnieniami</value>
     </data>
+    <data name="Add contributor" xml:space="preserve">
+        <value>Udostępnij</value>
+    </data>
 </root>
