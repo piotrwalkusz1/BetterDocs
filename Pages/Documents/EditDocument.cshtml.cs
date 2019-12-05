@@ -11,9 +11,5 @@ namespace BetterDocs.Pages
         {
             _logger = logger;
         }
-
-        public void OnGet()
-        {
-        }
     }
 }

@@ -4,6 +4,7 @@ using BetterDocs.Areas.Identity;
 using BetterDocs.Data;
 using BetterDocs.Data.Entities;
 using BetterDocs.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
@@ -11,60 +12,80 @@ namespace BetterDocs.Services
 {
     public class DocumentService
     {
-        private readonly DocumentsDbContext _documentsContext;
+        private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public DocumentService(DocumentsDbContext documentsContext, UserManager<ApplicationUser> userManager,
+        public DocumentService(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager,
             IHttpContextAccessor httpContextAccessor)
         {
-            _documentsContext = documentsContext;
+            _dbContext = dbContext;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
         }
 
         public List<TextDocument> GetDocumentsForUser()
         {
-            return _documentsContext.TextDocuments
-                .Where(document => document.OwnerId.Equals(GetApplicationUser().Id))
-                // TODO: Check collaborators 
+            var user = GetApplicationUser();
+            
+            return _dbContext.TextDocuments
+                .Where(document => document.Owner.Id.Equals(user.Id) || document.SharedWith.Any(u => u.Id.Equals(user.Id)))
                 .ToList();
         }
 
         public TextDocument CreateDocument(TextDocumentModel textDocument)
         {
             var document = new TextDocument
-                {Text = textDocument.Text, Name = textDocument.Name, OwnerId = GetApplicationUser().Id};
+                {Text = textDocument.Text, Name = textDocument.Name, Owner = GetApplicationUser()};
 
-            var entityEntry = _documentsContext.TextDocuments.Add(document);
-            _documentsContext.SaveChanges();
+            var entityEntry = _dbContext.TextDocuments.Add(document);
+            _dbContext.SaveChanges();
 
             return entityEntry.Entity;
         }
 
         public TextDocument GetDocument(string id)
         {
-            return _documentsContext.TextDocuments
+            var user = GetApplicationUser();
+            
+            return _dbContext.TextDocuments
                 .Where(document => document.Id.Equals(id))
-                .FirstOrDefault(document => document.OwnerId.Equals(GetApplicationUser().Id));
+                .FirstOrDefault(document => document.Owner.Id.Equals(user.Id) || document.SharedWith.Any(u => u.Id.Equals(user.Id)));
         }
 
-        public TextDocument UpdateDocument(TextDocumentModel textDocumentModel)
+        public void RemoveDocument(string id)
         {
-            var user = _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User).Result;
+            var user = GetApplicationUser();
+            
+            var textDocument = _dbContext.TextDocuments
+                .Where(document => document.Id.Equals(id))
+                .FirstOrDefault(document => document.Owner.Id.Equals(user.Id));
 
-            var textDocument = _documentsContext.TextDocuments
-                .Where(document => document.ContributorId.Equals(user.Id))
-                .FirstOrDefault(document => document.Id.Equals(textDocumentModel.Id));
+            if (textDocument == null)
+            {
+                return;
+            }
+
+            _dbContext.TextDocuments.Remove(textDocument);
+            _dbContext.SaveChanges();
+        }
+
+        public TextDocument UpdateDocument(string text, string documentId)
+        {
+            var user = GetApplicationUser();
+            
+            var textDocument = _dbContext.TextDocuments
+                .Where(document => document.Owner.Id.Equals(user.Id) || document.SharedWith.Any(u => u.Id.Equals(user.Id)))
+                .FirstOrDefault(document => document.Id.Equals(documentId));
 
             if (textDocument == null)
             {
                 // TODO: Return that the document doesn't exist or the user has no permission to view it.
                 return null;
             }
-
-            _documentsContext.TextDocuments.Update(textDocument);
-            _documentsContext.SaveChanges();
+            
+            textDocument.Text = text;
+            _dbContext.TextDocuments.Update(textDocument);
 
             return textDocument;
         }
@@ -72,16 +93,6 @@ namespace BetterDocs.Services
         private ApplicationUser GetApplicationUser()
         {
             return _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User).Result;
-        }
-
-        public void RemoveDocument(string id)
-        {
-            var textDocument = _documentsContext.TextDocuments.Where(document => document.Id.Equals(id))
-                .FirstOrDefault(document => document.OwnerId.Equals(GetApplicationUser().Id));
-
-            if (textDocument == null) return;
-            _documentsContext.TextDocuments.Remove(textDocument);
-            _documentsContext.SaveChanges();
         }
     }
 }

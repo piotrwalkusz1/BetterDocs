@@ -3,16 +3,14 @@ using System;
 using BetterDocs.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace BetterDocs.Data.Migrations
+namespace BetterDocs.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191203223748_ApplicationUser")]
-    partial class ApplicationUser
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,9 +26,6 @@ namespace BetterDocs.Data.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CustomTag")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
@@ -66,6 +61,9 @@ namespace BetterDocs.Data.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("TextDocumentId")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("INTEGER");
 
@@ -82,7 +80,31 @@ namespace BetterDocs.Data.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex");
 
+                    b.HasIndex("TextDocumentId");
+
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("BetterDocs.Data.Entities.TextDocument", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("TextDocuments");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -215,6 +237,20 @@ namespace BetterDocs.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("BetterDocs.Areas.Identity.ApplicationUser", b =>
+                {
+                    b.HasOne("BetterDocs.Data.Entities.TextDocument", null)
+                        .WithMany("SharedWith")
+                        .HasForeignKey("TextDocumentId");
+                });
+
+            modelBuilder.Entity("BetterDocs.Data.Entities.TextDocument", b =>
+                {
+                    b.HasOne("BetterDocs.Areas.Identity.ApplicationUser", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

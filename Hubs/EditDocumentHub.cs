@@ -8,17 +8,18 @@ namespace BetterDocs.Hubs
     [Authorize(AuthenticationSchemes = "Identity.Application")]
     public class EditDocumentHub : Hub
     {
-        private readonly DocumentEditionService _documentEditionService;
+        private readonly DocumentService _documentService;
 
-        public EditDocumentHub(DocumentEditionService documentEditionService)
+        public EditDocumentHub(DocumentService documentService)
         {
-            _documentEditionService = documentEditionService;
+            _documentService = documentService;
         }
 
         public async Task ChangeText(string text, string documentId)
         {
-            var textDocument = _documentEditionService.UpdateDocument(text, documentId);
-            await Clients.All.SendAsync("ChangeText", textDocument.Text);
+            var textDocument = _documentService.UpdateDocument(text, documentId);
+            // TODO: Nie wysyłaj do wszystkich, tylko do osób, które mają updarwnienia do dokumentu
+            await Clients.All.SendAsync("ChangeText", textDocument.Text, documentId);
         }
     }
 }

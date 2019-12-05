@@ -30,13 +30,11 @@ namespace BetterDocs
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDbContext<DocumentsDbContext>(options =>
-                options.UseSqlite(
-                    Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddRazorPages();
+            services.AddRazorPages()
+                .AddRazorPagesOptions(options => { options.Conventions.AuthorizeFolder("/Documents"); });
 
             services.AddAuthentication()
                 .AddCookie(options => options.SlidingExpiration = true);
@@ -62,7 +60,6 @@ namespace BetterDocs
 
             services.AddControllers();
 
-            services.AddScoped(typeof(DocumentEditionService));
             services.AddScoped(typeof(DocumentService));
         }
 
