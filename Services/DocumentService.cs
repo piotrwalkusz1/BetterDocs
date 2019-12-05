@@ -11,7 +11,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace BetterDocs.Services
 {
-    public class DocumentService
+    public class DocumentService : IDocumentService
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;

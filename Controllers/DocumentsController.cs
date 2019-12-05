@@ -12,9 +12,9 @@ namespace BetterDocs.Controllers
     [Authorize]
     public class DocumentsController : ControllerBase
     {
-        private readonly DocumentService _documentService;
+        private readonly IDocumentService _documentService;
 
-        public DocumentsController(DocumentService documentService)
+        public DocumentsController(IDocumentService documentService)
         {
             _documentService = documentService;
         }
