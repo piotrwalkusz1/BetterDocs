@@ -67,4 +67,27 @@
         <value>Save</value>
         <comment>Save</comment>
     </data>
+    <data name="An error occurred while processing your request" xml:space="preserve">
+        <value>An error occurred while processing your request</value>
+        <comment>An error occurred while processing your request</comment>
+    </data>
+    <data name="Welcome" xml:space="preserve">
+        <value>Welcome in BetterDocs</value>
+    </data>
+    <data name="Register" xml:space="preserve">
+        <value>Register</value>
+        <comment>Register</comment>
+    </data>
+    <data name="Logout" xml:space="preserve">
+        <value>Logout</value>
+        <comment>Logout</comment>
+    </data>
+    <data name="Login" xml:space="preserve">
+        <value>Login</value>
+        <comment>Login</comment>
+    </data>
+    <data name="Home" xml:space="preserve">
+        <value>Home</value>
+        <comment>Home</comment>
+    </data>
 </root>

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using BetterDocs.Data.Entities;
+using BetterDocs.Filters;
 using BetterDocs.Models;
 using BetterDocs.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -12,9 +13,9 @@ namespace BetterDocs.Controllers
     [Authorize]
     public class DocumentsController : ControllerBase
     {
-        private readonly DocumentService _documentService;
+        private readonly IDocumentService _documentService;
 
-        public DocumentsController(DocumentService documentService)
+        public DocumentsController(IDocumentService documentService)
         {
             _documentService = documentService;
         }
@@ -26,12 +27,14 @@ namespace BetterDocs.Controllers
         }
 
         [HttpGet("{id}")]
+        [ServiceFilter(typeof(CallCounterFilter))]
         public TextDocument GetTextDocument(string id)
         {
             return _documentService.GetDocument(id);
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(CallCounterFilter))]
         public CreatedAtActionResult CreateTextDocument(TextDocumentModel textDocument)
         {
             var document = _documentService.CreateDocument(textDocument);

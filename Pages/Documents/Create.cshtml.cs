@@ -7,9 +7,9 @@ namespace BetterDocs.Pages.Documents
 {
     public class Create : PageModel
     {
-        private readonly DocumentService _documentService;
+        private readonly IDocumentService _documentService;
 
-        public Create(DocumentService documentService)
+        public Create(IDocumentService documentService)
         {
             _documentService = documentService;
         }

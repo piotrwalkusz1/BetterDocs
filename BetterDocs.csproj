@@ -2,7 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.0</TargetFramework>
-        <UserSecretsId>aspnet-BetterDocs-A88E1EAA-EF11-4307-BC96-3F051356E105</UserSecretsId>
+	<GenerateProgramFile>false</GenerateProgramFile>
+	<UserSecretsId>aspnet-BetterDocs-A88E1EAA-EF11-4307-BC96-3F051356E105</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,14 +14,26 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.1" />
         <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+        <PackageReference Include="Moq" Version="4.13.1" />
         <PackageReference Include="PDF.Core" Version="2019.8.9" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.0.0-rc4" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="5.0.0-rc4" />
         <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
+        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Migrations" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\js\diff-match-patch\index.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\diff-match-patch\LICENSE" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\diff-match-patch\package.json" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\diff-match-patch\README.md" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\jsondiffpatch\dist\jsondiffpatch.umd.js" />
     </ItemGroup>
 
 </Project>

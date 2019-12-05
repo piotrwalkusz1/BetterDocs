@@ -9,9 +9,9 @@ namespace BetterDocs.Pages.Documents
 {
     public class List : PageModel
     {
-        private readonly DocumentService _documentService;
+        private readonly IDocumentService _documentService;
 
-        public List(DocumentService documentService)
+        public List(IDocumentService documentService)
         {
             _documentService = documentService;
         }
