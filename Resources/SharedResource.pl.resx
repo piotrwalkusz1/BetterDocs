@@ -65,4 +65,13 @@
     <data name="Save" xml:space="preserve">
         <value>Zapisz</value>
     </data>
+    <data name="An error occurred while processing your request" xml:space="preserve">
+        <value>Wystąpił błąd w trakcie przetwarzania twojego rządania</value>
+    </data>
+    <data name="Welcome" xml:space="preserve">
+        <value>Witaj w BetterDocs</value>
+    </data>
+    <data name="Home" xml:space="preserve">
+        <value>Strona główna</value>
+    </data>
 </root>

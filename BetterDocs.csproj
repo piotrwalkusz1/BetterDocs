@@ -33,4 +33,12 @@
       <Folder Include="Migrations" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\js\diff-match-patch\index.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\diff-match-patch\LICENSE" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\diff-match-patch\package.json" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\diff-match-patch\README.md" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\jsondiffpatch\dist\jsondiffpatch.umd.js" />
+    </ItemGroup>
+
 </Project>

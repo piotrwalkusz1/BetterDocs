@@ -5,9 +5,9 @@ namespace BetterDocs.Pages
 {
     public class EditDocumentModel : PageModel
     {
-        private readonly ILogger<PrivacyModel> _logger;
+        private readonly ILogger<EditDocumentModel> _logger;
 
-        public EditDocumentModel(ILogger<PrivacyModel> logger)
+        public EditDocumentModel(ILogger<EditDocumentModel> logger)
         {
             _logger = logger;
         }
