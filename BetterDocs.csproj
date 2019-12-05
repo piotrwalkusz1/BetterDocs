@@ -17,6 +17,8 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.1" />
         <PackageReference Include="PDF.Core" Version="2019.8.9" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.0.0-rc4" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="5.0.0-rc4" />
         <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
     </ItemGroup>
 
