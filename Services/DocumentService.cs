@@ -7,6 +7,7 @@ using BetterDocs.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace BetterDocs.Services
 {
@@ -15,13 +16,15 @@ namespace BetterDocs.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IDistributedCache _distributedCache;
 
         public DocumentService(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, IDistributedCache distributedCache)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _distributedCache = distributedCache;
         }
 
         public List<TextDocument> GetDocumentsForUser()
