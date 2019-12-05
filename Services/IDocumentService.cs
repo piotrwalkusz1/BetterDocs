@@ -24,5 +24,9 @@ namespace BetterDocs.Services
         void RemoveDocument(string id);
 
         TextDocument UpdateDocument(string text, string documentId);
+
+        void AddContributor(string documentId, string email);
+
+        void RemoveContributor(string documentId, string email);
     }
 }

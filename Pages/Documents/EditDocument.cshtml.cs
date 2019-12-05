@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Collections.Generic;
+using BetterDocs.Areas.Identity;
 using BetterDocs.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,19 +11,31 @@ namespace BetterDocs.Pages
     public class EditDocumentModel : PageModel
     {
         private readonly ILogger<EditDocumentModel> _logger;
-        private readonly DocumentService _documentService;
+        public readonly IDocumentService _documentService;
 
-        [FromQuery(Name = "Id")] public string DocumentId { get; set; }
+        [FromQuery(Name = "id")] public string DocumentId { get; set; }
 
-        public EditDocumentModel(ILogger<EditDocumentModel> logger, DocumentService documentService)
+        public ICollection<ApplicationUser> Contributors { get; set; }
+
+        public EditDocumentModel(ILogger<EditDocumentModel> logger, IDocumentService documentService)
         {
             _logger = logger;
             _documentService = documentService;
         }
 
-        public void OnPost(string email)
+        public IActionResult OnPostAddContributor(string email, string documentId)
         {
+            DocumentId = documentId;
             _documentService.AddContributor(DocumentId, email);
+            return RedirectToPage("EditDocument", new {id = DocumentId});
+        }
+
+        public IActionResult OnPostRemoveContributor(string email, string documentId)
+        {
+            DocumentId = documentId;
+            _documentService.RemoveContributor(DocumentId, email);
+
+            return RedirectToPage("EditDocument", new {id = DocumentId});
         }
     }
 }

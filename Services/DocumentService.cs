@@ -49,10 +49,11 @@ namespace BetterDocs.Services
         {
             var user = GetApplicationUser();
 
-            return _dbContext.TextDocuments
+            TextDocument firstOrDefault = _dbContext.TextDocuments
                 .Where(document => document.Id.Equals(id))
                 .FirstOrDefault(document =>
                     document.Owner.Id.Equals(user.Id) || document.SharedWith.Any(u => u.Id.Equals(user.Id)));
+            return firstOrDefault;
         }
 
         public TextDocument GetDocumentWithoutCheckingAccess(string id)
@@ -114,16 +115,26 @@ namespace BetterDocs.Services
 
             if (contributor == null) return;
 
-            if (textDocument.SharedWith == null)
-            {
-                textDocument.SharedWith = new List<ApplicationUser>();
-            }
-            
             textDocument.SharedWith.Add(contributor);
             _dbContext.TextDocuments.Update(textDocument);
             _dbContext.SaveChanges();
         }
 
+        public void RemoveContributor(string documentId, string email)
+        {
+            var textDocument = _dbContext.TextDocuments.Find(documentId);
+
+            if (textDocument == null || !CanEditDocument(textDocument)) return;
+
+            var contributor = _dbContext.ApplicationUsers.FirstOrDefault(user => user.Email.Equals(email));
+
+            if (contributor == null) return;
+
+            textDocument.SharedWith.Remove(contributor);
+            _dbContext.TextDocuments.Update(textDocument);
+            _dbContext.SaveChanges();
+        }
+        
         private bool CanEditDocument([NotNull] TextDocument textDocument)
         {
             var userId = GetApplicationUser().Id;

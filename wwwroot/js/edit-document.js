@@ -39,6 +39,7 @@ document.getElementById("saveDocument").onclick = function () {
 };
 
 document.getElementById("addContributor").onclick = () => $("#addContributorModal").modal('show');
+document.getElementById("manageContributors").onclick = () => $("#showContributorsModal").modal('show');
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/editDocumentHub").build();
 

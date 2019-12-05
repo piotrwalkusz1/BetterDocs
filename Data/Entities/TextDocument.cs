@@ -11,6 +11,6 @@ namespace BetterDocs.Data.Entities
         public string Name { get; set; }
         public string Text { get; set; }
         public ApplicationUser Owner { get; set; }
-        public virtual ICollection<ApplicationUser> SharedWith { get; set; }
+        public virtual ICollection<ApplicationUser> SharedWith { get; set; } = new List<ApplicationUser>();
     }
 }
