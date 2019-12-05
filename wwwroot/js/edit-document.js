@@ -38,6 +38,8 @@ document.getElementById("saveDocument").onclick = function () {
     });
 };
 
+document.getElementById("addContributor").onclick = () => $("#addContributorModal").modal('show');
+
 var connection = new signalR.HubConnectionBuilder().withUrl("/editDocumentHub").build();
 
 connection.start().then(function () {

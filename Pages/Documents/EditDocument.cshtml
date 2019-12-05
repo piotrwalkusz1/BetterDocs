@@ -5,11 +5,31 @@
 @{
     ViewData["Title"] = Localizer["Edit document"];
 }
+<div class="desk">
+    <div class="btn-group">
+        <button id="saveDocument" class="btn btn-primary">@Localizer["Save"]</button>
+        <button id="addContributor" class="btn">Add contributor</button>
+    </div>
+    
+    <div class="modal fade" tabindex="-1" id="addContributorModal" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        <input class="form-control" name="email" type="email" placeholder="User email" id="email"/>
+                        <input type="submit" class="btn btn-primary" value="Add"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div>
-    <button id="saveDocument">@Localizer["Save"]</button>
-    <textarea id="documentContent"></textarea>
+    <textarea class="page" id="documentContent"></textarea>
 </div>
+
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/diff-match-patch-js-browser-and-nodejs/diff_match_patch.js"></script>
 <script src="~/js/edit-document.js"></script>

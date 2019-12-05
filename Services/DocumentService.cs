@@ -1,13 +1,12 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using BetterDocs.Areas.Identity;
 using BetterDocs.Data;
 using BetterDocs.Data.Entities;
 using BetterDocs.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace BetterDocs.Services
 {
@@ -28,16 +27,17 @@ namespace BetterDocs.Services
         public List<TextDocument> GetDocumentsForUser()
         {
             var user = GetApplicationUser();
-            
+
             return _dbContext.TextDocuments
-                .Where(document => document.Owner.Id.Equals(user.Id) || document.SharedWith.Any(u => u.Id.Equals(user.Id)))
+                .Where(document =>
+                    document.Owner.Id.Equals(user.Id) || document.SharedWith.Any(u => u.Id.Equals(user.Id)))
                 .ToList();
         }
 
         public TextDocument CreateDocument(TextDocumentModel textDocument)
         {
             var document = new TextDocument
-                {Text = textDocument.Text, Name = textDocument.Name, Owner = GetApplicationUser()};
+                {Text = textDocument.Text ?? "", Name = textDocument.Name, Owner = GetApplicationUser()};
 
             var entityEntry = _dbContext.TextDocuments.Add(document);
             _dbContext.SaveChanges();
@@ -48,10 +48,11 @@ namespace BetterDocs.Services
         public TextDocument GetDocument(string id)
         {
             var user = GetApplicationUser();
-            
+
             return _dbContext.TextDocuments
                 .Where(document => document.Id.Equals(id))
-                .FirstOrDefault(document => document.Owner.Id.Equals(user.Id) || document.SharedWith.Any(u => u.Id.Equals(user.Id)));
+                .FirstOrDefault(document =>
+                    document.Owner.Id.Equals(user.Id) || document.SharedWith.Any(u => u.Id.Equals(user.Id)));
         }
 
         public TextDocument GetDocumentWithoutCheckingAccess(string id)
@@ -63,7 +64,7 @@ namespace BetterDocs.Services
         public void RemoveDocument(string id)
         {
             var user = GetApplicationUser();
-            
+
             var textDocument = _dbContext.TextDocuments
                 .Where(document => document.Id.Equals(id))
                 .FirstOrDefault(document => document.Owner.Id.Equals(user.Id));
@@ -80,16 +81,17 @@ namespace BetterDocs.Services
         public TextDocument UpdateDocument(string text, string documentId)
         {
             var user = GetApplicationUser();
-            
+
             var textDocument = _dbContext.TextDocuments
-                .Where(document => document.Owner.Id.Equals(user.Id) || document.SharedWith.Any(u => u.Id.Equals(user.Id)))
+                .Where(document =>
+                    document.Owner.Id.Equals(user.Id) || document.SharedWith.Any(u => u.Id.Equals(user.Id)))
                 .FirstOrDefault(document => document.Id.Equals(documentId));
 
             if (textDocument == null)
             {
                 return null;
             }
-            
+
             textDocument.Text = text;
             _dbContext.TextDocuments.Update(textDocument);
             _dbContext.SaveChanges();
@@ -100,6 +102,36 @@ namespace BetterDocs.Services
         private ApplicationUser GetApplicationUser()
         {
             return _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User).Result;
+        }
+
+        public void AddContributor(string documentId, string email)
+        {
+            var textDocument = _dbContext.TextDocuments.Find(documentId);
+
+            if (textDocument == null || !CanEditDocument(textDocument)) return;
+
+            var contributor = _dbContext.ApplicationUsers.FirstOrDefault(user => user.Email.Equals(email));
+
+            if (contributor == null) return;
+
+            if (textDocument.SharedWith == null)
+            {
+                textDocument.SharedWith = new List<ApplicationUser>();
+            }
+            
+            textDocument.SharedWith.Add(contributor);
+            _dbContext.TextDocuments.Update(textDocument);
+            _dbContext.SaveChanges();
+        }
+
+        private bool CanEditDocument([NotNull] TextDocument textDocument)
+        {
+            var userId = GetApplicationUser().Id;
+
+            return textDocument.Owner.Id.Equals(userId) ||
+                   textDocument.SharedWith.Any(
+                       contributor => contributor.Id.Equals(userId)
+                   );
         }
     }
 }
