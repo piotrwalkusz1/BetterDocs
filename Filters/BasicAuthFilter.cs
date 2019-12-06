@@ -3,6 +3,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
+using BetterDocs.Areas.Identity;
 using BetterDocs.Data;
 using Castle.Core.Internal;
 using Microsoft.AspNetCore.Identity;
@@ -17,14 +18,12 @@ namespace BetterDocs.Filters
             if (context.HttpContext.User.Identity.IsAuthenticated)
             {
                 return;
-                
-
             }
 
             var headers = context.HttpContext.Request.Headers["Authorization"];
             if (headers.IsNullOrEmpty() || !headers[0].StartsWith("Basic "))
             {
-                return;   
+                return;
             }
 
             var token = headers[0].Substring(6);
@@ -33,7 +32,11 @@ namespace BetterDocs.Filters
             var username = credentials[0];
             var password = credentials[1];
 
-            var dbContext = (ApplicationDbContext) context.HttpContext.RequestServices.GetService(typeof(ApplicationDbContext));
+            var dbContext =
+                (ApplicationDbContext) context.HttpContext.RequestServices.GetService(typeof(ApplicationDbContext));
+            var passwordHasher =
+                (IPasswordHasher<ApplicationUser>) context.HttpContext.RequestServices.GetService(
+                    typeof(IPasswordHasher<ApplicationUser>));
             var user = dbContext.ApplicationUsers.FirstOrDefault(u => u.Email.Equals(username));
 
             if (user == null)
@@ -41,6 +44,11 @@ namespace BetterDocs.Filters
                 return;
             }
             
+            if (passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password) != PasswordVerificationResult.Success)
+            {
+                return;
+            }
+
             var identity = new GenericIdentity(username);
             identity.AddClaim(new Claim(new ClaimsIdentityOptions().UserIdClaimType, user.Id));
             var principal = new ClaimsPrincipal(identity);
