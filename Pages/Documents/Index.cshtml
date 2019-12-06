@@ -1,4 +1,5 @@
 @page
+@using Castle.Core.Internal
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IHtmlLocalizer<SharedResource> Localizer;
 @model BetterDocs.Pages.Documents.List
@@ -7,51 +8,109 @@
     ViewData["Title"] = Localizer["Documents"];
 }
 
-<h1>Index</h1>
+<div class="container">
+    <div id="myDocuments" class="table">
+        <h2 class="modal-title">@Localizer["My documents"]</h2>
 
-<p>
-    <a asp-page="Create">
-        @Localizer["Create new"]
-    </a>
-</p>
+        @if (!Model.OwnTextDocumentModels.IsNullOrEmpty())
+        {
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>
+                        @Localizer["Name"]
+                    </th>
+                    <th>
+                        @Localizer["Id"]
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.OwnTextDocumentModels)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            <a asp-page="EditDocument" asp-route-id="@item.Id">@Localizer["Edit"]</a>
+                        </td>
+                        <td>
+                            <a asp-controller="Documents" asp-action="GetDocumentAsPdf" asp-route-id="@item.Id">@Localizer["Download"]</a>
+                        </td>
+                        <td>
+                            <form method="post">
+                                <input type="hidden" name="id" value="@item.Id"/>
+                                <input type="submit" value="@Localizer["Delete"]" asp-page-handler="Remove"/>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div>
+                <p>@Localizer["Your documents will be visibile on this list"].</p>
+            </div>
+        }
+        <form method="get" asp-page="Create">
+            <button type="submit" class="btn-primary" asp-page="Create">@Localizer["Create document"]</button>
+        </form>
+    </div>
 
-<table class="table">
-    <thead>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.TextDocumentModels[0].Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TextDocumentModels[0].Id)
-        </th>
-        <th></th>
-        <th></th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model.TextDocumentModels)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                <a asp-page="EditDocument" asp-route-id="@item.Id">@Localizer["Edit"]</a>
-            </td>
-            <td>
-                <form method="post">
-                    <input type="hidden" name="id" value="@item.Id"/>
-                    <input type="submit" value="@Localizer["Delete"]" asp-page-handler="Remove"/>
-                </form>
-            </td>
-            <td>
-                <a asp-controller="Documents" asp-action="GetDocumentAsPdf" asp-route-id="@item.Id">@Localizer["Download"]</a>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+
+    <div id="sharedDocuments" class="table">
+        <h2 class="modal-title">@Localizer["Shared with me"]</h2>
+        @if (!Model.SharedTextDocumentModels.IsNullOrEmpty())
+        {
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>
+                        @Localizer["Name"]
+                    </th>
+                    <th>
+                        @Localizer["Id"]
+                    </th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.SharedTextDocumentModels)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            <a asp-page="EditDocument" asp-route-id="@item.Id">@Localizer["Edit"]</a>
+                        </td>
+                        <td>
+                            <a asp-controller="Documents" asp-action="GetDocumentAsPdf" asp-route-id="@item.Id">@Localizer["Download"]</a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div>
+                <p>@Localizer["You have no any shared document"].</p>
+            </div>
+        }
+    </div>
+
+</div>

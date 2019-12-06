@@ -16,11 +16,16 @@ namespace BetterDocs.Pages.Documents
             _documentService = documentService;
         }
 
-        public IList<TextDocumentModel> TextDocumentModels { get; set; }
+        public IList<TextDocumentModel> OwnTextDocumentModels { get; set; }
+        public IList<TextDocumentModel> SharedTextDocumentModels { get; set; }
 
         public void OnGet()
         {
-            TextDocumentModels = _documentService.GetDocumentsForUser().Select(document =>
+            OwnTextDocumentModels = _documentService.GetDocumentsCreatedByUser().Select(document =>
+                    new TextDocumentModel {Name = document.Name, Text = document.Text, Id = document.Id})
+                .ToList();
+
+            SharedTextDocumentModels = _documentService.GetDocumentsSharedWithUser().Select(document =>
                     new TextDocumentModel {Name = document.Name, Text = document.Text, Id = document.Id})
                 .ToList();
         }

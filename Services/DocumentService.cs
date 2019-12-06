@@ -7,6 +7,7 @@ using BetterDocs.Data.Entities;
 using BetterDocs.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace BetterDocs.Services
 {
@@ -15,13 +16,15 @@ namespace BetterDocs.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IDistributedCache _distributedCache;
 
         public DocumentService(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, IDistributedCache distributedCache)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _distributedCache = distributedCache;
         }
 
         public List<TextDocument> GetDocumentsForUser()
@@ -31,6 +34,25 @@ namespace BetterDocs.Services
             return _dbContext.TextDocuments
                 .Where(document =>
                     document.Owner.Id.Equals(user.Id) || document.DocumentsSharing.Any(u => u.UserId.Equals(user.Id)))
+                .ToList();
+        }
+
+        public List<TextDocument> GetDocumentsCreatedByUser()
+        {
+            var user = GetApplicationUser();
+
+            return _dbContext.TextDocuments
+                .Where(document =>
+                    document.Owner.Id.Equals(user.Id))
+                .ToList();
+        }
+
+        public List<TextDocument> GetDocumentsSharedWithUser()
+        {
+            var user = GetApplicationUser();
+
+            return _dbContext.TextDocuments
+                .Where(document => document.DocumentsSharing.Any(u => u.UserId.Equals(user.Id)))
                 .ToList();
         }
 
@@ -77,6 +99,7 @@ namespace BetterDocs.Services
 
             _dbContext.TextDocuments.Remove(textDocument);
             _dbContext.SaveChanges();
+            ClearCache(id);
         }
 
         public TextDocument UpdateDocument(string text, string documentId)
@@ -97,6 +120,7 @@ namespace BetterDocs.Services
             _dbContext.TextDocuments.Update(textDocument);
             _dbContext.SaveChanges();
 
+            ClearCache(documentId);
             return textDocument;
         }
 
@@ -118,6 +142,8 @@ namespace BetterDocs.Services
             textDocument.DocumentsSharing.Add(new ShareDocument {UserId = contributor.Id, DocumentId = textDocument.Id});
             _dbContext.TextDocuments.Update(textDocument);
             _dbContext.SaveChanges();
+
+            ClearCache(documentId);
         }
 
         public void RemoveContributor(string documentId, string email)
@@ -135,8 +161,10 @@ namespace BetterDocs.Services
             textDocument.DocumentsSharing.Remove(documentSharing);
             _dbContext.TextDocuments.Update(textDocument);
             _dbContext.SaveChanges();
+
+            ClearCache(documentId);
         }
-        
+
         private bool CanEditDocument([NotNull] TextDocument textDocument)
         {
             var userId = GetApplicationUser().Id;
@@ -145,6 +173,17 @@ namespace BetterDocs.Services
                    textDocument.DocumentsSharing.Any(
                        contributor => contributor.UserId.Equals(userId)
                    );
+        }
+
+        private void ClearCache(string documentId)
+        {
+            _distributedCache.Remove("documents/" + documentId + "/text");
+            _distributedCache.Remove("documents/" + documentId + "/users");
+        }
+
+        private ApplicationUser GetApplicationUser()
+        {
+            return _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User).Result;
         }
     }
 }

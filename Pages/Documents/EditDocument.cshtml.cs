@@ -14,13 +14,17 @@ namespace BetterDocs.Pages
         public readonly IDocumentService _documentService;
 
         [FromQuery(Name = "id")] public string DocumentId { get; set; }
-
         public ICollection<ApplicationUser> Contributors { get; set; }
 
         public EditDocumentModel(ILogger<EditDocumentModel> logger, IDocumentService documentService)
         {
             _logger = logger;
             _documentService = documentService;
+        }
+
+        public void OnGet()
+        {
+            Contributors = _documentService.GetDocument(DocumentId).SharedWith;
         }
 
         public IActionResult OnPostAddContributor(string email, string documentId)
