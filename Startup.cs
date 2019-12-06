@@ -70,11 +70,7 @@ namespace BetterDocs
 
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "My API", Version = "v1"}); });
 
-            services.AddDistributedRedisCache(options =>
-            {
-                options.InstanceName = "Sample";
-                options.Configuration = "localhost";
-            });
+            services.AddDistributedMemoryCache();
 
             services.AddSession();
         }
@@ -82,6 +78,14 @@ namespace BetterDocs
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                using (var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>())
+                {
+                    context.Database.Migrate();
+                }
+            }
+        
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
