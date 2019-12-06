@@ -1,5 +1,4 @@
-  redis:
-    image: redis
-    ports:
-      - "6379:6379"
-ww
+redis:
+  image: redis
+  ports:
+    - "6379:6379"
