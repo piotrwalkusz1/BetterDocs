@@ -161,6 +161,7 @@ namespace BetterDocs.Services
 
             if (contributor == null) return;
 
+            RefreshDbContext();
             var documentSharing = textDocument.DocumentsSharing.First(x => x.UserId.Equals(contributor.Id));
 
             textDocument.DocumentsSharing.Remove(documentSharing);
