@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using BetterDocs.Areas.Identity;
 using BetterDocs.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +15,18 @@ namespace BetterDocs.Pages
         public readonly IDocumentService _documentService;
 
         [FromQuery(Name = "id")] public string DocumentId { get; set; }
-
         public ICollection<ApplicationUser> Contributors { get; set; }
 
         public EditDocumentModel(ILogger<EditDocumentModel> logger, IDocumentService documentService)
         {
             _logger = logger;
             _documentService = documentService;
+        }
+
+        public void OnGet()
+        {
+            Contributors = _documentService.GetDocument(DocumentId).DocumentsSharing.Select(
+                document => document.User).ToList();
         }
 
         public IActionResult OnPostAddContributor(string email, string documentId)

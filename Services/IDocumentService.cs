@@ -28,5 +28,9 @@ namespace BetterDocs.Services
         void AddContributor(string documentId, string email);
 
         void RemoveContributor(string documentId, string email);
+
+        List<TextDocument> GetDocumentsSharedWithUser();
+
+        List<TextDocument> GetDocumentsCreatedByUser();
     }
 }

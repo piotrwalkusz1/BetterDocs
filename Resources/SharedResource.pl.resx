@@ -83,4 +83,25 @@
     <data name="Add contributor" xml:space="preserve">
         <value>Udostępnij</value>
     </data>
+    <data name="My documents" xml:space="preserve">
+        <value>Moje dokumenty</value>
+    </data>
+    <data name="Shared with me" xml:space="preserve">
+        <value>Udostępnione dla mnie</value>
+    </data>
+    <data name="You have no any shared document" xml:space="preserve">
+        <value>Nie masz żadnych udostępnionych dokumentów</value>
+    </data>
+    <data name="Your documents will be visibile on this list" xml:space="preserve">
+        <value>Twoje dokumenty będą widoczne na tej liście</value>
+    </data>
+    <data name="Create document" xml:space="preserve">
+        <value>Stwórz dokument</value>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Nazwa</value>
+    </data>
+    <data name="Id" xml:space="preserve">
+        <value>Identyfikator</value>
+    </data>
 </root>
