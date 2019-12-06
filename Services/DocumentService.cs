@@ -51,9 +51,12 @@ namespace BetterDocs.Services
         {
             var user = GetApplicationUser();
 
-            return _dbContext.TextDocuments
+            var documentsSharedWithUser = _dbContext.TextDocuments
                 .Where(document => document.DocumentsSharing.Any(u => u.UserId.Equals(user.Id)))
                 .ToList();
+            RefreshDbContext();
+
+            return documentsSharedWithUser;
         }
 
         public TextDocument CreateDocument(TextDocumentModel textDocument)
@@ -71,11 +74,13 @@ namespace BetterDocs.Services
         {
             var user = GetApplicationUser();
 
-            TextDocument firstOrDefault = _dbContext.TextDocuments
+            var textDocument = _dbContext.TextDocuments
                 .Where(document => document.Id.Equals(id))
                 .FirstOrDefault(document =>
                     document.Owner.Id.Equals(user.Id) || document.DocumentsSharing.Any(u => u.UserId.Equals(user.Id)));
-            return firstOrDefault;
+            RefreshDbContext();
+
+            return textDocument;
         }
 
         public TextDocument GetDocumentWithoutCheckingAccess(string id)
@@ -116,17 +121,14 @@ namespace BetterDocs.Services
                 return null;
             }
 
+            RefreshDbContext();
+
             textDocument.Text = text;
             _dbContext.TextDocuments.Update(textDocument);
             _dbContext.SaveChanges();
 
             ClearCache(documentId);
             return textDocument;
-        }
-
-        private ApplicationUser GetApplicationUser()
-        {
-            return _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User).Result;
         }
 
         public void AddContributor(string documentId, string email)
@@ -139,7 +141,10 @@ namespace BetterDocs.Services
 
             if (contributor == null) return;
 
-            textDocument.DocumentsSharing.Add(new ShareDocument {UserId = contributor.Id, DocumentId = textDocument.Id});
+            RefreshDbContext();
+
+            textDocument.DocumentsSharing.Add(new ShareDocument
+                {UserId = contributor.Id, DocumentId = textDocument.Id});
             _dbContext.TextDocuments.Update(textDocument);
             _dbContext.SaveChanges();
 
@@ -157,7 +162,7 @@ namespace BetterDocs.Services
             if (contributor == null) return;
 
             var documentSharing = textDocument.DocumentsSharing.First(x => x.UserId.Equals(contributor.Id));
-            
+
             textDocument.DocumentsSharing.Remove(documentSharing);
             _dbContext.TextDocuments.Update(textDocument);
             _dbContext.SaveChanges();
@@ -184,6 +189,12 @@ namespace BetterDocs.Services
         private ApplicationUser GetApplicationUser()
         {
             return _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User).Result;
+        }
+
+        private void RefreshDbContext()
+        {
+            _dbContext.ShareDocuments.ToList();
+            _dbContext.ApplicationUsers.ToList();
         }
     }
 }
