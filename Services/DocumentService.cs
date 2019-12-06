@@ -5,6 +5,7 @@ using BetterDocs.Areas.Identity;
 using BetterDocs.Data;
 using BetterDocs.Data.Entities;
 using BetterDocs.Models;
+using Castle.Core.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Distributed;
@@ -17,14 +18,16 @@ namespace BetterDocs.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IDistributedCache _distributedCache;
+        private readonly ILogger _logger;
 
         public DocumentService(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager,
-            IHttpContextAccessor httpContextAccessor, IDistributedCache distributedCache)
+            IHttpContextAccessor httpContextAccessor, IDistributedCache distributedCache, ILogger logger)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _distributedCache = distributedCache;
+            _logger = logger;
         }
 
         public List<TextDocument> GetDocumentsForUser()
@@ -40,6 +43,7 @@ namespace BetterDocs.Services
         public List<TextDocument> GetDocumentsCreatedByUser()
         {
             var user = GetApplicationUser();
+            _logger.InfoFormat("Fetching documents created by user {}", user.UserName);
 
             return _dbContext.TextDocuments
                 .Where(document =>
@@ -51,6 +55,7 @@ namespace BetterDocs.Services
         {
             var user = GetApplicationUser();
 
+            _logger.InfoFormat("Fetching documents shared with user {}", user.UserName);
             var documentsSharedWithUser = _dbContext.TextDocuments
                 .Where(document => document.DocumentsSharing.Any(u => u.UserId.Equals(user.Id)))
                 .ToList();
@@ -67,6 +72,7 @@ namespace BetterDocs.Services
             var entityEntry = _dbContext.TextDocuments.Add(document);
             _dbContext.SaveChanges();
 
+            _logger.InfoFormat("Document with Id {} created.", document.Id);
             return entityEntry.Entity;
         }
 
@@ -99,11 +105,14 @@ namespace BetterDocs.Services
 
             if (textDocument == null)
             {
+                _logger.WarnFormat("Couldn't find document with Id {}", id);
                 return;
             }
 
             _dbContext.TextDocuments.Remove(textDocument);
             _dbContext.SaveChanges();
+            
+            _logger.InfoFormat("Document {} removed", id);
             ClearCache(id);
         }
 
@@ -111,6 +120,7 @@ namespace BetterDocs.Services
         {
             var user = GetApplicationUser();
 
+            _logger.InfoFormat("Updating the document with ID {} by a user {}", documentId, user.UserName);
             var textDocument = _dbContext.TextDocuments
                 .Where(document =>
                     document.Owner.Id.Equals(user.Id) || document.DocumentsSharing.Any(u => u.UserId.Equals(user.Id)))
@@ -118,6 +128,7 @@ namespace BetterDocs.Services
 
             if (textDocument == null)
             {
+                _logger.WarnFormat("Document not found, returning");
                 return null;
             }
 
@@ -127,6 +138,7 @@ namespace BetterDocs.Services
             _dbContext.TextDocuments.Update(textDocument);
             _dbContext.SaveChanges();
 
+            _logger.InfoFormat("Document with ID {} updated", textDocument.Id);
             ClearCache(documentId);
             return textDocument;
         }
@@ -135,11 +147,21 @@ namespace BetterDocs.Services
         {
             var textDocument = _dbContext.TextDocuments.Find(documentId);
 
-            if (textDocument == null || !CanEditDocument(textDocument)) return;
+            if (textDocument == null || !CanEditDocument(textDocument))
+            {
+                _logger.WarnFormat(
+                    "Cannot add a contributor to document with ID {}.\n Couldn't find this document or a user {} has no permission to view it",
+                    documentId, email);
+                return;
+            }
 
             var contributor = _dbContext.ApplicationUsers.FirstOrDefault(user => user.Email.Equals(email));
 
-            if (contributor == null) return;
+            if (contributor == null)
+            {
+                _logger.WarnFormat("Couldn't find user with email {}", email);
+                return;
+            }
 
             RefreshDbContext();
 
@@ -147,7 +169,8 @@ namespace BetterDocs.Services
                 {UserId = contributor.Id, DocumentId = textDocument.Id});
             _dbContext.TextDocuments.Update(textDocument);
             _dbContext.SaveChanges();
-
+            
+            _logger.InfoFormat("User {} added as a contributor to the document {} successfully", email, documentId);
             ClearCache(documentId);
         }
 
@@ -183,6 +206,7 @@ namespace BetterDocs.Services
 
         private void ClearCache(string documentId)
         {
+            _logger.InfoFormat("Clearing cache");
             _distributedCache.Remove("documents/" + documentId + "/text");
             _distributedCache.Remove("documents/" + documentId + "/users");
         }
@@ -194,6 +218,7 @@ namespace BetterDocs.Services
 
         private void RefreshDbContext()
         {
+            _logger.InfoFormat("Refreshing DbContexts");
             _dbContext.ShareDocuments.ToList();
             _dbContext.ApplicationUsers.ToList();
         }
