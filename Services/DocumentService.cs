@@ -91,8 +91,11 @@ namespace BetterDocs.Services
 
         public TextDocument GetDocumentWithoutCheckingAccess(string id)
         {
-            return _dbContext.TextDocuments
+            var textDocument = _dbContext.TextDocuments
                 .FirstOrDefault(document => document.Id.Equals(id));
+            
+            RefreshDbContext();
+            return textDocument;
         }
 
         public void RemoveDocument(string id)
