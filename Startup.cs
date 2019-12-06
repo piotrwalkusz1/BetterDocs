@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Bson;
 
 namespace BetterDocs
 {
@@ -45,7 +46,7 @@ namespace BetterDocs
 
             services.AddSignalR();
             services.AddLocalization(options => options.ResourcesPath = "Resources");
-            services.AddMvc()
+            services.AddMvc(config => { config.Filters.Add(new BasicAuthFilter()); })
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
                 .AddDataAnnotationsLocalization();
 
@@ -74,7 +75,7 @@ namespace BetterDocs
                 options.InstanceName = "Sample";
                 options.Configuration = "localhost";
             });
-            
+
             services.AddSession();
         }
 
@@ -110,13 +111,10 @@ namespace BetterDocs
                 endpoints.MapHub<EditDocumentHub>("/editDocumentHub");
                 endpoints.MapControllers();
             });
-            
+
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-            });
-            
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
+
             app.UseSession();
         }
     }

@@ -3,14 +3,13 @@ using BetterDocs.Data.Entities;
 using BetterDocs.Filters;
 using BetterDocs.Models;
 using BetterDocs.Services;
-using Microsoft.AspNetCore.Authorization;
+using IronPdf;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BetterDocs.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class DocumentsController : ControllerBase
     {
         private readonly IDocumentService _documentService;
@@ -46,7 +45,7 @@ namespace BetterDocs.Controllers
         {
             var textDocument = _documentService.GetDocument(id);
 
-            var content = IronPdf.HtmlToPdf.StaticRenderHtmlAsPdf(textDocument.Text).Stream;
+            var content = HtmlToPdf.StaticRenderHtmlAsPdf(textDocument.Text).Stream;
             var contentType = "APPLICATION/octet-stream";
             var fileName = textDocument.Name + ".pdf";
 
