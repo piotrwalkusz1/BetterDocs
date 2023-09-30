@@ -1,0 +1,37 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  createdAt DateTime @default(now())
+  firstName String?
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+model Anime {
+  createdAt     DateTime @default(now())
+  episodesCount Int
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String   @unique
+  seasons       Season[]
+  updatedAt     DateTime @updatedAt
+}
+
+model Season {
+  anime     Anime?   @relation(fields: [animeId], references: [id])
+  animeId   String?  @db.ObjectId
+  createdAt DateTime @default(now())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  updatedAt DateTime @updatedAt
+}
